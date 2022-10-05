@@ -39,36 +39,3 @@ optional arguments:
 
 I monitor the items listed in the example NetWatch.ini file.  Using this I can figure out where a failure ocurred.  If I can access my internal targets but not an outside target then I know it was an internet failure.  If I can't access anything then likely problem is my router or something else internal.
 
-## Example output
-<code>
-NetWatch Analyzer v22.10.05
-Google DNS Server IP: [99.39% uptime over 1 day, 6:15:11]
-        Success 1813, Failures 11
-        Average time: 5.45ms
-        Max time: 11.79ms
-        Min time: 4.92ms
-
-Google: [99.39% uptime over 1 day, 6:15:11]
-        Success 1813, Failures 11
-        Average time: 5.46ms
-        Max time: 10.33ms
-        Min time: 4.78ms
-
-Home Media Server: [99.67% uptime over 1 day, 6:15:11]
-        Success 1818, Failures 6
-        Average time: 0.6ms
-        Max time: 1.38ms
-        Min time: 0.14ms
-
-Home Router: [99.72% uptime over 1 day, 6:15:11]
-        Success 1819, Failures 5
-        Average time: 0.83ms
-        Max time: 250.22ms
-        Min time: 0.2ms
-
-Public IP Address Changes: [Current IP-->50.54.174.104
-        50.38.37.157-->x.x.x.x  [2022-10-04 13:18:54]
-        x.x.x.x-->50.54.174.104 [2022-10-04 13:19:32]
-        50.54.174.104-->x.x.x.x [2022-10-04 14:01:44]
-        x.x.x.x-->50.54.174.104 [2022-10-04 14:02:43]
-</code>
