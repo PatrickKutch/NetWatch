@@ -12,7 +12,7 @@ import NetWatch
 
 __author__ = "Patrick Kutch"
 __license__ = "BSD"
-__version__ = "22.10.04"
+__version__ = "22.10.05"
 __maintainer__ = "Patrick Kutch"
 __email__ = "Patrick.Kutch@gmail.com"
 __status__ = "Production"
@@ -20,26 +20,47 @@ __status__ = "Production"
 config = None
 
 
+def getDateTimeByRow(dataSet, rowNumber) -> tuple:
+    try:
+        date = dataSet["Date"][rowNumber].strip()
+        time = dataSet["Time"][rowNumber].strip()
+    except:  # likely the row number is invalid, or Date and Time not in the file!
+        return None
+
+    dateTimeStr = date + time
+    return datetime.strptime(dateTimeStr, "%m/%d/%Y%H:%M:%S")
+
+
 def doReport(dataSet, target: str) -> None:
     targDsAll = dataSet[target]
-    x = len(targDsAll)
+    totalPoints = len(targDsAll)
     # do not include the failures
     targDsValid = targDsAll[targDsAll != int(config["SETTINGS"]["FailureValue"])]
-    y = len(targDsValid)
-    mean1 = targDsValid.mean()
+    totalValidPoints = len(targDsValid)
+
+    # calculate time span for data collection
+    startRow = targDsAll.index[
+        0
+    ]  # could modify config file to add/remove targets, so don't assume all are the same
+    endRow = targDsAll.index[-1]
+    startTime = getDateTimeByRow(dataSet, startRow)
+    endTime = getDateTimeByRow(dataSet, endRow)
+    timeSpan = endTime - startTime
+    avg1 = (int(targDsAll.mean(axis=0) * 100)) / 100
     max1 = targDsValid.max()
     min1 = targDsValid.min()
-    median1 = targDsValid.median()
-    std1 = targDsValid.std()
-    var1 = targDsValid.var()
-    print(target)
-    print("\tMean time: " + str(mean1))
-    print("\tMax time: " + str(max1))
-    print("\tMin time: " + str(min1))
-    print("\tMedian time: " + str(median1))
-    print("\tSuccess {}, Failures {}".format(y, x - y))
-    #    print("\tStd of time: " + str(std1))
-    #    print("\tVar of time: " + str(var1))
+    successRate = int(totalValidPoints / totalPoints * 10000) / 100
+
+    print("{}: [{}% uptime over {}]".format(target, successRate, timeSpan))
+    print(
+        "\tSuccess {}, Failures {}".format(
+            totalValidPoints, totalPoints - totalValidPoints
+        )
+    )
+
+    print("\tAverage time: {}ms".format(avg1))
+    print("\tMax time: {}ms".format(max1))
+    print("\tMin time: {}ms".format(min1))
 
     print()
 
@@ -61,6 +82,14 @@ def main():
     parser.add_argument(
         "-o", "--output", help="file to write to", type=str, required=True
     )
+
+    parser.add_argument(
+        "-l",
+        "--last",
+        help="will run the report on the data from the last # of seconds specified",
+        type=int,
+    )
+
     parser.add_argument(
         "-q", "--quiet", help="will not print out status", action="store_true"
     )
@@ -80,11 +109,12 @@ def main():
         return
 
     dataSet = pd.read_csv(args.input)
-    # print(dataSet)
-    # x = dataSet.columns
-    # print(x)
+
     targets = dataSet.columns[3:]
-    # print(targets)
+
+    if targets.size < 1:
+        print("No info found in input file {}".format(args.input))
+        return
 
     for targ in targets:
         doReport(dataSet, targ)

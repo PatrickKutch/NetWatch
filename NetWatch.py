@@ -96,15 +96,15 @@ def writeData(dataList, fileName, externalIp) -> None:
     now = datetime.now()  # current date and time
 
     if not os.path.exists(fileName):  # 1st time writing file, so put in column headers
-        header = "Public IP, Date, Time"
+        header = "Public IP,Date,Time"
         for target, _ in dataList:
-            header += ", {}".format(target)
+            header += ",{}".format(target)
 
         header += "\n"
         with open(fileName, "wt+") as fp:
             fp.write(header)
 
-    row = "{}, {}, {}".format(
+    row = "{},{},{}".format(
         externalIp, now.strftime("%m/%d/%Y"), now.strftime("%H:%M:%S")
     )
     for _, pingTimeInMs in dataList:
