@@ -17,7 +17,7 @@ optional arguments:
   -o OUTPUT, --output OUTPUT
                         file to write to
   -q, --quiet           will not print out status
-  
+
 You can specify any targets as you like in the config file, an example is provided (NetWatch.ini).
 
 # nwAnalyzer
@@ -36,3 +36,5 @@ optional arguments:
   -l LAST, --last LAST  will run the report on the data from the last # of seconds specified you can specify an
                         optional suffix (with no space): s: seconds (default) m: minutes (example: 32m) h: hours
                         (example: 12h) d: days (example: 3d)
+
+I monitor the items listed in the example NetWatch.ini file.  Using this I can figure out where a failure ocurred.  If I can access my internal targets but not an outside target then I know it was an internet failure.  If I can't access anything then likely problem is my router or something else internal.

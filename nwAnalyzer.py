@@ -145,8 +145,8 @@ def reportPublicIP(dataSet):
     ipList = dataCol.unique()
     if len(ipList) > 1:
         prevIP = dataCol[0]
-        print("\nPublic IP Address Changes: [Current IP-->{}".format(ipList[-1]))
-        for index, currIP in enumerate(ipList):
+        print("Public IP Address Changes: [Current IP-->{}".format(ipList[-1]))
+        for index, currIP in enumerate(dataSet["Public IP"]):
             if currIP != prevIP:
                 print(
                     "\t{}-->{}\t[{}]".format(
@@ -156,9 +156,7 @@ def reportPublicIP(dataSet):
                 prevIP = currIP
 
     else:
-        print(
-            "\nNo Public IP Address Changes Detected: [Current IP-->{}".format(ipList)
-        )
+        print("No Public IP Address Changes Detected: [Current IP-->{}".format(ipList))
 
     print()
 
