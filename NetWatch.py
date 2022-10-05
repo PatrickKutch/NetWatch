@@ -108,7 +108,7 @@ def writeData(dataList, fileName, externalIp) -> None:
         externalIp, now.strftime("%m/%d/%Y"), now.strftime("%H:%M:%S")
     )
     for _, pingTimeInMs in dataList:
-        row += ", {}".format(pingTimeInMs)
+        row += ",{}".format(pingTimeInMs)
 
     row += "\n"
     try:
