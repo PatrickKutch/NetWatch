@@ -159,6 +159,8 @@ def VerifyConfig(config) -> bool:
         )
         config["Settings"] = {}
 
+    # now use defaults if they aren't defined - could be bad config file, or from missing [SETTNGS]
+
     if not "PingTimeoutTime" in config["SETTINGS"]:
         config["SETTINGS"]["PingTimeoutTime"] = str(defaultPingTimeoutTime)
 
@@ -173,25 +175,34 @@ def VerifyConfig(config) -> bool:
     if not "FailureValue" in config["SETTINGS"]:
         config["SETTINGS"]["FailureValue"] = str(defaultFailureValue)
 
+    retVal = True
+
+    # make sure the values in the config file were numbers
     try:
         int(config["SETTINGS"]["PingInterval"])
     except ValueError:
         print("PingInterval must be a number")
-        return False
+        retVal = False
+
+    try:
+        int(config["SETTINGS"]["PingTimeoutTime"])
+    except ValueError:
+        print("PingTimeoutTime must be a number")
+        retVal = False
 
     try:
         int(config["SETTINGS"]["PingIntervalWhenFailure"])
     except ValueError:
         print("PingIntervalWhenFailure must be a number")
-        return False
+        retVal = False
 
     try:
         int(config["SETTINGS"]["FailureValue"])
     except ValueError:
         print("FailureValue must be a number")
-        return False
+        retVal = False
 
-    return True
+    return retVal
 
 
 def main():
@@ -223,7 +234,11 @@ def main():
     loopNum = 1
     failCount = 0
     successCount = 0
-    pingTimeoutTime = int(config["SETTINGS"]["PingTimeoutTime"])
+
+    pingTimeoutTime = int(
+        config["SETTINGS"]["PingTimeoutTime"]
+    )  # already validated to be an int
+
     while True:
         startTime = time.time()
 
@@ -232,7 +247,9 @@ def main():
             config["SETTINGS"]["FailureValue"],
             pingTimeoutTime,
         )
+
         currIP = getPublicIp()
+
         writeData(dataList, args.output, currIP)
 
         endTime = time.time()
