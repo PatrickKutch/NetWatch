@@ -13,7 +13,7 @@ import NetWatch
 
 __author__ = "Patrick Kutch"
 __license__ = "BSD"
-__version__ = "22.10.05"
+__version__ = "22.10.07"
 __maintainer__ = "Patrick Kutch"
 __email__ = "Patrick.Kutch@gmail.com"
 __status__ = "Production"
@@ -54,6 +54,7 @@ def doReportForTarget(dataSet, target: str) -> None:
     totalPoints = len(targDsAll)
     # do not include the failures
     targDsValid = targDsAll[targDsAll != int(config["SETTINGS"]["FailureValue"])]
+    targDsFailed = targDsAll[targDsAll == int(config["SETTINGS"]["FailureValue"])]
     totalValidPoints = len(targDsValid)
 
     # calculate time span for data collection
@@ -70,11 +71,15 @@ def doReportForTarget(dataSet, target: str) -> None:
     successRate = int(totalValidPoints / totalPoints * 10000) / 100
 
     print("{}: [{}% uptime over {}]".format(target, successRate, timeSpan))
-    print(
-        "\tSuccess {}, Failures {}".format(
-            totalValidPoints, totalPoints - totalValidPoints
-        )
+    nextLine = "\tSuccess {}, Failures {}".format(
+        totalValidPoints, totalPoints - totalValidPoints
     )
+    if len(targDsFailed) > 0:  # there was at least 1 failure
+        nextLine += " [most recent - {}]".format(
+            getDateTimeByRow(dataSet, targDsFailed.index[-1])
+        )
+
+    print(nextLine)
 
     print("\tAverage time: {}ms".format(avg1))
     print("\tMax time: {}ms".format(max1))
